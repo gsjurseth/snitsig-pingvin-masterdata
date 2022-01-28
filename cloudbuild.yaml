@@ -1,15 +1,15 @@
 steps:
 # Build the container for md
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/$PROJECT_ID/md', '.']
-  dir: 'src'
-# Push the container image to Container Registry
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/$PROJECT_ID/md']
-# Deploy container image to Cloud Run
-- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  entrypoint: gcloud
-  args: ['run', 'deploy', 'md', '--image', 'gcr.io/$PROJECT_ID/md', '--region', '$_REGION','--vpc-connector','vpc-connector','--vpc-egress','private-ranges-only','--update-env-vars','mongohost=10.132.0.2,mongoport=27017,MONGO_USERNAME=appuser,MONGO_PASSWORD=apppwd,BUCKET=$_BUCKET']
+#- name: 'gcr.io/cloud-builders/docker'
+#  args: ['build', '-t', 'gcr.io/$PROJECT_ID/md', '.']
+#  dir: 'src'
+## Push the container image to Container Registry
+#- name: 'gcr.io/cloud-builders/docker'
+#  args: ['push', 'gcr.io/$PROJECT_ID/md']
+## Deploy container image to Cloud Run
+#- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+#  entrypoint: gcloud
+#  args: ['run', 'deploy', 'md', '--image', 'gcr.io/$PROJECT_ID/md', '--region', '$_REGION','--vpc-connector','vpc-connector','--vpc-egress','private-ranges-only','--update-env-vars','mongohost=10.132.0.2,mongoport=27017,MONGO_USERNAME=appuser,MONGO_PASSWORD=apppwd,BUCKET=$_BUCKET']
 #
 ### And now for the bash part
 #
@@ -19,8 +19,6 @@ steps:
   args: 
   - '-c'
   - | 
-    gcloud auth print-access-token > a.token
-    _TOKEN=$(cat a.token) 
     echo "---- Fetching apigeecli"
     curl -LO https://github.com/srinandan/apigeecli/releases/download/v1.106-beta.0/apigeecli_v1.106-beta.0_Linux_x86_64.zip
     gcloud auth print-access-token > token
@@ -49,5 +47,5 @@ steps:
     apigeecli_v1.106-beta.0_Linux_x86_64/apigeecli apis create -n $_SERVICE -f $_SERVICE.yaml --oas-google-idtoken-aud-ref=propertyset.$_SERVICE.aud --oas-target-url-ref=propertyset.$_SERVICE.url -t $(cat token) | awk -F '"' '$2 ~ "revision"{print $4}' > revision
     apigeecli_v1.106-beta.0_Linux_x86_64/apigeecli resources create  -n $_SERVICE -r /workspace/$_SERVICE.properties -p properties -e $_ENV
     apigeecli_v1.106-beta.0_Linux_x86_64/apigeecli apis deploy -v $(cat revision) -r -n $_SERVICE -t $(cat token) -e $_ENV -s $_GSA@$_PROJECT_ID.iam.gserviceaccount.com
-images:
-- gcr.io/$PROJECT_ID/md
+    #images:
+    #- gcr.io/$PROJECT_ID/md
