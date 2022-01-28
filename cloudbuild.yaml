@@ -34,7 +34,7 @@ steps:
     ## Let's update the spec file with our service
     #
     echo "About to update OAS yaml"
-    sed -i -e "s/\@\@URL\@\@/$(grep target_url workspace.properties | awk -F '=' '{print $2}')/" $_SERVICE.yaml
+    sed -i -e "s#@@URL@@#$(grep target_url workspace.properties | awk -F '=' '{print $2}')#" $_SERVICE.yaml
     #
     ## Let's fetch apigeecli
     #
