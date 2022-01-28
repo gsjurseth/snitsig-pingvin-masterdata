@@ -25,15 +25,15 @@ steps:
     #
     ## now let's create the property set file
     #
-    gcloud run services describe $_SERVICE --platform managed --region $_REGION --format 'value(status.url)' > workspace.properties
-    gcloud run services describe $_SERVICE --platform managed --region $_REGION --format 'value(status.url)' >> workspace.properties
+    echo "target_url=$(gcloud run services describe $_SERVICE --platform managed --region $_REGION --format 'value(status.url)')/md" > workspace.properties
+    echo "target_audience=$(gcloud run services describe $_SERVICE --platform managed --region $_REGION --format 'value(status.url)')" >> workspace.properties
     echo "Printing"
     cat workspace.properties
     #
     ## Let's update the spec file with our service
     #
     echo "About to update OAS yaml"
-    sed -i -e "s/@@URL@@/$(grep target_url workspace.properties | awk -F '=' '{print $1}')/" $_SERVICE.yaml
+    sed -e "s/@@URL@@/$(grep target_url workspace.properties | awk -F '=' '{print $1}')/" $_SERVICE.yaml
     #
     ## Let's fetch apigeecli
     #
