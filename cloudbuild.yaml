@@ -14,11 +14,12 @@ steps:
 ### And now for the bash part
 #
 - id: 'Grab apigeecli, fetch details on deployment of cloudrun artifact, and de[;pu based on OAS'
-  name: 'gcr.io/cloud-builders/gcloud'
+  name: gcr.io/google.com/cloudsdktool/cloud-sdk
   entrypoint: 'bash'
-  args: 
-  - '-c'
-  - | 
+  args:
+  - -c
+  - |
+ 
     echo "---- Fetching apigeecli"
     curl -LO https://github.com/srinandan/apigeecli/releases/download/v1.106-beta.0/apigeecli_v1.106-beta.0_Linux_x86_64.zip
     gcloud auth print-access-token > token
@@ -33,11 +34,11 @@ steps:
     ## Let's update the spec file with our service
     #
     echo "About to update OAS yaml"
-    sed -e "s/@@URL@@/$(grep target_url workspace.properties | awk -F '=' '{print $1}')/" $_SERVICE.yaml
+    sed -i -e "s/@@URL@@/$(grep target_url workspace.properties | awk -F '=' '{print $2}')/" $_SERVICE.yaml
     #
     ## Let's fetch apigeecli
     #
-    echo "wget apigeecli"
+    echo "prepping apigeecli"
     apt-get install -y unzip zip
     unzip apigeecli_v1.106-beta.0_Linux_x86_64.zip
     #
