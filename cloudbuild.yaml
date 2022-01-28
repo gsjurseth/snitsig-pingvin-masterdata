@@ -44,9 +44,9 @@ steps:
     #
     ## Now let's use apigeecli to setup our property set and deploy it all to apigee 
     #
-    apigeecli_v1.106-beta.0_Linux_x86_64/apigeecli prefs set -s=false -o $_PROJECT_ID
+    apigeecli_v1.106-beta.0_Linux_x86_64/apigeecli prefs set -s=false -o $PROJECT_ID
     apigeecli_v1.106-beta.0_Linux_x86_64/apigeecli apis create -n $_SERVICE -f $_SERVICE.yaml --oas-google-idtoken-aud-ref=propertyset.$_SERVICE.aud --oas-target-url-ref=propertyset.$_SERVICE.url -t $(cat token) | awk -F '"' '$2 ~ "revision"{print $4}' > revision
     apigeecli_v1.106-beta.0_Linux_x86_64/apigeecli resources create  -n $_SERVICE -r /workspace/$_SERVICE.properties -p properties -e $_ENV
-    apigeecli_v1.106-beta.0_Linux_x86_64/apigeecli apis deploy -v $(cat revision) -r -n $_SERVICE -t $(cat token) -e $_ENV -s $_GSA@$_PROJECT_ID.iam.gserviceaccount.com
+    apigeecli_v1.106-beta.0_Linux_x86_64/apigeecli apis deploy -v $(cat revision) -r -n $_SERVICE -t $(cat token) -e $_ENV -s $_GSA@$PROJECT_ID.iam.gserviceaccount.com
     #images:
     #- gcr.io/$PROJECT_ID/md
