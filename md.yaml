@@ -8,6 +8,7 @@ servers:
   - url: @@URL@@
 security:
   - ApiKeyAuth: []  
+basePath: /
 paths:
   '/md':
     get:
