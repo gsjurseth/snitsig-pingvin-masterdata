@@ -7,23 +7,19 @@ steps:
 #- name: 'gcr.io/cloud-builders/docker'
 #  args: ['push', 'gcr.io/$PROJECT_ID/md']
 ## Deploy container image to Cloud Run
-#- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+#- name: 'gcr.io/apigee-product-demo/cloud-sdk:1.0.0'
 #  entrypoint: gcloud
 #  args: ['run', 'deploy', 'md', '--image', 'gcr.io/$PROJECT_ID/md', '--region', '$_REGION','--vpc-connector','vpc-connector','--vpc-egress','private-ranges-only','--update-env-vars','mongohost=10.132.0.2,mongoport=27017,MONGO_USERNAME=appuser,MONGO_PASSWORD=apppwd,BUCKET=$_BUCKET']
 #
 ### And now for the bash part
 #
 - id: 'Grab apigeecli, fetch details on deployment of cloudrun artifact, and de[;pu based on OAS'
-  name: gcr.io/google.com/cloudsdktool/cloud-sdk
+  name: gcr.io/apigee-product-demo/cloud-sdk:1.0.0
   entrypoint: 'bash'
   args:
   - -c
   - |
  
-    echo "---- Fetching apigeecli"
-    cp md.yaml /tmp
-    cd /tmp
-    curl -LO https://github.com/srinandan/apigeecli/releases/download/v1.106-beta.2/apigeecli_v1.106-beta.2_Linux_x86_64.zip
     gcloud auth print-access-token > /tmp/token
     #
     ## now let's create the property set file
@@ -33,18 +29,13 @@ steps:
     echo "Printing"
     cat workspace.properties
     #
-    ## Let's fetch apigeecli
-    #
-    echo "prepping apigeecli"
-    apt-get install -y unzip zip
-    unzip apigeecli_v1.106-beta.2_Linux_x86_64.zip
     #
     ## Now let's use apigeecli to setup our property set and deploy it all to apigee 
     #
-    apigeecli_v1.106-beta.2_Linux_x86_64/apigeecli prefs set -s=false -o $PROJECT_ID
-    echo "apigeecli_v1.106-beta.2_Linux_x86_64/apigeecli apis create -n $_SERVICE -f $_SERVICE.yaml --oas-google-idtoken-aud-ref=propertyset.$_SERVICE.aud --oas-target-url-ref=propertyset.$_SERVICE.url -t $(cat token) | awk -F '\"' '$2 ~ \"revision\"{print $4}'"
-    apigeecli_v1.106-beta.2_Linux_x86_64/apigeecli apis create -n $_SERVICE -f $_SERVICE.yaml --oas-google-idtoken-aud-ref=propertyset.$_SERVICE.aud --oas-target-url-ref=propertyset.$_SERVICE.url -t $(cat token) | awk -F '"' '$2 ~ "revision"{print $4}' > /tmp/revision
-    apigeecli_v1.106-beta.2_Linux_x86_64/apigeecli resources create  -n $_SERVICE -r /workspace/$_SERVICE.properties -p properties -e $_ENV -t $(cat token)
-    apigeecli_v1.106-beta.2_Linux_x86_64/apigeecli apis deploy -v $(cat revision) -r -n $_SERVICE -t $(cat token) -e $_ENV -s $_GSA@$PROJECT_ID.iam.gserviceaccount.com
+    /tmp/apigeecli prefs set -s=false -o $PROJECT_ID
+    echo "/tmp/apigeecli apis create -n $_SERVICE -f $_SERVICE.yaml --oas-google-idtoken-aud-ref=propertyset.$_SERVICE.aud --oas-target-url-ref=propertyset.$_SERVICE.url -t $(cat token) | awk -F '\"' '$2 ~ \"revision\"{print $4}'"
+    /tmp/apigeecli apis create -n $_SERVICE -f $_SERVICE.yaml --oas-google-idtoken-aud-ref=propertyset.$_SERVICE.aud --oas-target-url-ref=propertyset.$_SERVICE.url -t $(cat token) | awk -F '"' '$2 ~ "revision"{print $4}' > /tmp/revision
+    /tmp/apigeecli resources create  -n $_SERVICE -r /workspace/$_SERVICE.properties -p properties -e $_ENV -t $(cat token)
+    /tmp/apigeecli apis deploy -v $(cat revision) -r -n $_SERVICE -t $(cat token) -e $_ENV -s $_GSA@$PROJECT_ID.iam.gserviceaccount.com
     #images:
     #- gcr.io/$PROJECT_ID/md
