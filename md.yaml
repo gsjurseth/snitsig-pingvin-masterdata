@@ -8,9 +8,9 @@ servers:
   - url: @@URL@@
 security:
   - ApiKeyAuth: []  
-basePath: /
+basePath: /md
 paths:
-  '/md':
+  '/':
     get:
       summary: 'List `Masterdata` objects.'
       description: |
@@ -33,7 +33,7 @@ paths:
                       A token which can be sent as `pageToken`
                       to retrieve the next page.
                     type: string
-  '/md/{name}':
+  '/{name}':
     get:
       description: 'Retrieve a single Person object.'
       parameters:
