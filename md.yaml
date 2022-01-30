@@ -6,6 +6,7 @@ info:
     Masterdata microservice
 servers: 
   - url: https://my.example.com/md
+basePath: /md
 security:
   - ApiKeyAuth: []
   
