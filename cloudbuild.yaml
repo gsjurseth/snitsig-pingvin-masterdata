@@ -37,7 +37,7 @@ steps:
     #
     echo "prepping apigeecli"
     apt-get install -y unzip zip
-    unzip apigeecli_v1.106-beta.2_Linux_x86_64.zip -d /tmp
+    unzip apigeecli_v1.106-beta.3_Linux_x86_64.zip -d /tmp
     #
     ## Now let's use apigeecli to setup our property set and deploy it all to apigee 
     #
