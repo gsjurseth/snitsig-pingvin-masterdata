@@ -28,8 +28,6 @@ steps:
     echo "target_url=$(gcloud run services describe $_SERVICE --platform managed --region $_REGION --format 'value(status.url)')/md" > /tmp/$_SERVICE.properties
     echo "target_audience=$(gcloud run services describe $_SERVICE --platform managed --region $_REGION --format 'value(status.url)')" >> /tmp/$_SERVICE.properties
     echo "Printing"
-    cat workspace.properties
-    #
     #
     ## Now let's use apigeecli to setup our property set and deploy it all to apigee 
     #
