@@ -21,7 +21,7 @@ steps:
   - |
  
     echo "---- Fetching apigeecli"
-    curl -LO https://github.com/srinandan/apigeecli/releases/download/v1.106-beta.0/apigeecli_v1.106-beta.0_Linux_x86_64.zip
+    curl -LO https://github.com/srinandan/apigeecli/releases/download/v1.106-beta.2/apigeecli_v1.106-beta.2_Linux_x86_64.zip
     gcloud auth print-access-token > token
     #
     ## now let's create the property set file
@@ -31,22 +31,17 @@ steps:
     echo "Printing"
     cat workspace.properties
     #
-    ## Let's update the spec file with our service
-    #
-    echo "About to update OAS yaml"
-    sed -i -e "s#@@URL@@#$(grep target_url workspace.properties | awk -F '=' '{print $2}')#" $_SERVICE.yaml
-    #
     ## Let's fetch apigeecli
     #
     echo "prepping apigeecli"
     apt-get install -y unzip zip
-    unzip apigeecli_v1.106-beta.0_Linux_x86_64.zip
+    unzip apigeecli_v1.106-beta.2_Linux_x86_64.zip
     #
     ## Now let's use apigeecli to setup our property set and deploy it all to apigee 
     #
-    apigeecli_v1.106-beta.0_Linux_x86_64/apigeecli prefs set -s=false -o $PROJECT_ID
-    apigeecli_v1.106-beta.0_Linux_x86_64/apigeecli apis create -n $_SERVICE -f $_SERVICE.yaml --oas-google-idtoken-aud-ref=propertyset.$_SERVICE.aud --oas-target-url-ref=propertyset.$_SERVICE.url -t $(cat token) | awk -F '"' '$2 ~ "revision"{print $4}' > revision
-    apigeecli_v1.106-beta.0_Linux_x86_64/apigeecli resources create  -n $_SERVICE -r /workspace/$_SERVICE.properties -p properties -e $_ENV
-    apigeecli_v1.106-beta.0_Linux_x86_64/apigeecli apis deploy -v $(cat revision) -r -n $_SERVICE -t $(cat token) -e $_ENV -s $_GSA@$PROJECT_ID.iam.gserviceaccount.com
+    apigeecli_v1.106-beta.2_Linux_x86_64/apigeecli prefs set -s=false -o $PROJECT_ID
+    apigeecli_v1.106-beta.2_Linux_x86_64/apigeecli apis create -n $_SERVICE -f $_SERVICE.yaml --oas-google-idtoken-aud-ref=propertyset.$_SERVICE.aud --oas-target-url-ref=propertyset.$_SERVICE.url -t $(cat token) | awk -F '"' '$2 ~ "revision"{print $4}' > revision
+    apigeecli_v1.106-beta.2_Linux_x86_64/apigeecli resources create  -n $_SERVICE -r /workspace/$_SERVICE.properties -p properties -e $_ENV -t $(cat token)
+    apigeecli_v1.106-beta.2_Linux_x86_64/apigeecli apis deploy -v $(cat revision) -r -n $_SERVICE -t $(cat token) -e $_ENV -s $_GSA@$PROJECT_ID.iam.gserviceaccount.com
     #images:
     #- gcr.io/$PROJECT_ID/md
