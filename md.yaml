@@ -5,10 +5,16 @@ info:
   description: |
     Masterdata microservice
 servers: 
-  - url: @@URL@@
+  - url: https://my.example.com/md
+basePath: /md
 security:
   - ApiKeyAuth: []  
-basePath: /md
+  
+x-google-ratelimit: 
+  - name: md
+    rate-literal: 10pm
+    identifier-ref: request.header.url
+    
 paths:
   '/':
     get:
