@@ -32,7 +32,7 @@ steps:
     ## Now let's use apigeecli to setup our property set and deploy it all to apigee 
     #
     /tmp/apigeecli prefs set -s=false -o $PROJECT_ID
-    /tmp/apigeecli resources delete -n $_SERVICE -p properties -e $_ENV
+    /tmp/apigeecli resources delete -n $_SERVICE -p properties -e $_ENV -t $(cat token)
     echo "/tmp/apigeecli apis create -n $_SERVICE -f $_SERVICE.yaml --oas-google-idtoken-aud-ref=propertyset.$_SERVICE.aud --oas-target-url-ref=propertyset.$_SERVICE.url -t $(cat token) | awk -F '\"' '$2 ~ \"revision\"{print $4}'"
     /tmp/apigeecli apis create -n $_SERVICE -f $_SERVICE.yaml --oas-google-idtoken-aud-ref=propertyset.$_SERVICE.aud --oas-target-url-ref=propertyset.$_SERVICE.url -t $(cat token) | awk -F '"' '$2 ~ "revision"{print $4}' > /tmp/revision
     /tmp/apigeecli resources create  -n $_SERVICE -r /tmp/$_SERVICE.properties -p properties -e $_ENV -t $(cat token)
