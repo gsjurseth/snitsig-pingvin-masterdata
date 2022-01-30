@@ -5,12 +5,17 @@ info:
   description: |
     Masterdata microservice
 servers: 
-  - url: @@URL@@
+  - url: https://my.example.com/md
 security:
-  - ApiKeyAuth: []  
-basePath: /
+  - ApiKeyAuth: []
+  
+x-google-ratelimit: 
+  - name: md
+    rate-literal: 10pm
+    identifier-ref: request.header.url
+    
 paths:
-  '/md':
+  '/':
     get:
       summary: 'List `Masterdata` objects.'
       description: |
@@ -33,7 +38,7 @@ paths:
                       A token which can be sent as `pageToken`
                       to retrieve the next page.
                     type: string
-  '/md/{name}':
+  '/{name}':
     get:
       description: 'Retrieve a single Person object.'
       parameters:
