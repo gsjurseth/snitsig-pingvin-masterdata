@@ -19,7 +19,8 @@ steps:
   args:
   - -c
   - |
- 
+    cp md.yaml /tmp
+    cd /tmp 
     gcloud auth print-access-token > /tmp/token
     #
     ## now let's create the property set file
