@@ -38,7 +38,7 @@ steps:
     /tmp/apigeecli apis deploy -v $(cat revision) -r -n $_SERVICE -t $(cat token) -e $_ENV -s $_GSA@$PROJECT_ID.iam.gserviceaccount.com
     #
     ## Let's handle the apiproduct 
-    #
+    # foo
     #/tmp/apigeecli products list -o $PROJECT_ID -t $(cat token) | jq ".apiProduct [].name" | fgrep $_SERVICE >/dev/null
     #if [ $? -eq "0" ]
     #then
