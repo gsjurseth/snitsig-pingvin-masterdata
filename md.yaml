@@ -12,7 +12,7 @@ security:
 x-google-ratelimit: 
   - name: md
     rate-literal: 10pm
-    identifier-ref: request.header.url
+    identifier-ref: request.url
     
 paths:
   '/':
