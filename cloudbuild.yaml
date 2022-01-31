@@ -32,9 +32,16 @@ steps:
     #
     /tmp/apigeecli prefs set -s=false -o $PROJECT_ID
     /tmp/apigeecli resources delete -n $_SERVICE -p properties -e $_ENV -t $(cat token)
-    echo "/tmp/apigeecli apis create -n $_SERVICE -f $_SERVICE.yaml --oas-google-idtoken-aud-ref=propertyset.$_SERVICE.aud --oas-target-url-ref=propertyset.$_SERVICE.url -t $(cat token) | awk -F '\"' '$2 ~ \"revision\"{print $4}'"
+    echo "/tmp/apigeecli apis create -n $_SERVICE -f $_SERVICE.yaml --oas-google-idtoken-aud-ref=propertyset.$_SERVICE.aud --add-cors=true --oas-target-url-ref=propertyset.$_SERVICE.url -t $(cat token) | awk -F '\"' '$2 ~ \"revision\"{print $4}'"
     /tmp/apigeecli apis create -n $_SERVICE -f $_SERVICE.yaml --oas-google-idtoken-aud-ref=propertyset.$_SERVICE.aud --oas-target-url-ref=propertyset.$_SERVICE.url -t $(cat token) | awk -F '"' '$2 ~ "revision"{print $4}' > /tmp/revision
     /tmp/apigeecli resources create  -n $_SERVICE -r /tmp/$_SERVICE.properties -p properties -e $_ENV -t $(cat token)
     /tmp/apigeecli apis deploy -v $(cat revision) -r -n $_SERVICE -t $(cat token) -e $_ENV -s $_GSA@$PROJECT_ID.iam.gserviceaccount.com
+    #
+    ## Let's handle the apiproduct 
+    #
+    #/tmp/apigeecli products list -o $PROJECT_ID -t $(cat token) | jq ".apiProduct [].name" | fgrep $_SERVICE >/dev/null
+    #if [ $? -eq "0" ]
+    #then
+    #fi
     #images:
     #- gcr.io/$PROJECT_ID/md
