@@ -39,7 +39,7 @@ steps:
     #
     ## Let's handle the apiproduct 
     #
-    /tmp/apigeecli products list -o $PROJECT_ID -t $(cat /tmp/token) | jq ".apiProduct [].name" | fgrep $_SERVICE >/dev/null
+    /tmp/apigeecli products list -t $(cat /tmp/token) | jq ".apiProduct [].name" | fgrep $_SERVICE >/dev/null
     if [ $? -eq "0" ]
     then
       apigeecli products update -o apigee-product-demo -d "${_SERVICE} product" -m "${_SERVICE}Product" -n ${_SERVICE}Product -p $_SERVICE -t $(cat /tmp/token) -f auto
