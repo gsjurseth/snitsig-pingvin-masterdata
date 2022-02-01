@@ -19,7 +19,9 @@ steps:
   args:
   - -c
   - |
+    sed -i -e "s/@@SVC@@/$_SERVICE/" opgrp-product.json
     cp $_SERVICE.yaml /tmp
+    cp opgrp-product.json /tmp
     cd /tmp 
     gcloud auth print-access-token > /tmp/token
     #
@@ -42,9 +44,9 @@ steps:
     /tmp/apigeecli products list -t $(cat /tmp/token) | jq ".apiProduct [].name" | fgrep $_SERVICE >/dev/null
     if [ $? -eq "0" ]
     then
-      /tmp/apigeecli products update -o apigee-product-demo -f auto -d "${_SERVICE} product" -m "${_SERVICE}Product" -n ${_SERVICE}Product -p $_SERVICE -t $(cat /tmp/token)
+      /tmp/apigeecli products update -o apigee-product-demo --opgrp /tmp/opgrp-product.json -f auto -d "${_SERVICE} product" -m "${_SERVICE}Product" -n ${_SERVICE}Product -p $_SERVICE -t $(cat /tmp/token)
     else
-      /tmp/apigeecli products create -o apigee-product-demo -f auto -d "${_SERVICE}  product" -e $_ENV -m "${_SERVICE}Product" -n ${_SERVICE}Product -p $_SERVICE -t $(cat /tmp/token)
+      /tmp/apigeecli products create -o apigee-product-demo --opgrp /tmp/opgrp-product.json -f auto -d "${_SERVICE}  product" -e $_ENV -m "${_SERVICE}Product" -n ${_SERVICE}Product -p $_SERVICE -t $(cat /tmp/token)
     fi
     #
     ## Now let's handle the app
