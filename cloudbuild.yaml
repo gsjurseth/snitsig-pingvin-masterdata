@@ -10,7 +10,7 @@ steps:
 #- name: 'gcr.io/apigee-product-demo/cloud-sdk:1.0.0'
 #  entrypoint: gcloud
 #  args: ['run', 'deploy', '$_SERVICE', '--image', 'gcr.io/$PROJECT_ID/$_SERVICE', '--region', '$_REGION','--vpc-connector','vpc-connector','--vpc-egress','private-ranges-only','--update-env-vars','mongohost=10.132.0.2,mongoport=27017,MONGO_USERNAME=appuser,MONGO_PASSWORD=apppwd,BUCKET=$_BUCKET']
-#
+##
 ### And now for the bash part
 #
 - id: 'Grab apigeecli, fetch details on deployment of cloudrun artifact, and based on OAS'
