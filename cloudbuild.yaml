@@ -14,7 +14,7 @@ steps:
 ### And now for the bash part
 #
 - id: 'Grab apigeecli, fetch details on deployment of cloudrun artifact, and based on OAS'
-  name: gcr.io/apigee-product-demo/cloud-sdk:1.0.0
+  name: gcr.io/apigee-product-demo/cloud-sdk:1.0.1
   entrypoint: 'bash'
   args:
   - -c
