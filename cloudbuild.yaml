@@ -1,15 +1,15 @@
 steps:
-# Build the container for md
+# Build the container for $_SERVICE
 #- name: 'gcr.io/cloud-builders/docker'
-#  args: ['build', '-t', 'gcr.io/$PROJECT_ID/md', '.']
+#  args: ['build', '-t', 'gcr.io/$PROJECT_ID/$_SERVICE', '.']
 #  dir: 'src'
 ## Push the container image to Container Registry
 #- name: 'gcr.io/cloud-builders/docker'
-#  args: ['push', 'gcr.io/$PROJECT_ID/md']
+#  args: ['push', 'gcr.io/$PROJECT_ID/$_SERVICE']
 ## Deploy container image to Cloud Run
 #- name: 'gcr.io/apigee-product-demo/cloud-sdk:1.0.0'
 #  entrypoint: gcloud
-#  args: ['run', 'deploy', 'md', '--image', 'gcr.io/$PROJECT_ID/md', '--region', '$_REGION','--vpc-connector','vpc-connector','--vpc-egress','private-ranges-only','--update-env-vars','mongohost=10.132.0.2,mongoport=27017,MONGO_USERNAME=appuser,MONGO_PASSWORD=apppwd,BUCKET=$_BUCKET']
+#  args: ['run', 'deploy', '$_SERVICE', '--image', 'gcr.io/$PROJECT_ID/$_SERVICE', '--region', '$_REGION','--vpc-connector','vpc-connector','--vpc-egress','private-ranges-only','--update-env-vars','mongohost=10.132.0.2,mongoport=27017,MONGO_USERNAME=appuser,MONGO_PASSWORD=apppwd,BUCKET=$_BUCKET']
 #
 ### And now for the bash part
 #
@@ -19,13 +19,13 @@ steps:
   args:
   - -c
   - |
-    cp md.yaml /tmp
+    cp $_SERVICE.yaml /tmp
     cd /tmp 
     gcloud auth print-access-token > /tmp/token
     #
     ## now let's create the property set file
     #
-    echo "url=$(gcloud run services describe $_SERVICE --platform managed --region $_REGION --format 'value(status.url)')/md" > /tmp/$_SERVICE.properties
+    echo "url=$(gcloud run services describe $_SERVICE --platform managed --region $_REGION --format 'value(status.url)')/$_SERVICE" > /tmp/$_SERVICE.properties
     echo "aud=$(gcloud run services describe $_SERVICE --platform managed --region $_REGION --format 'value(status.url)')" >> /tmp/$_SERVICE.properties
     #
     ## Now let's use apigeecli to setup our property set and deploy it all to apigee 
@@ -38,10 +38,23 @@ steps:
     /tmp/apigeecli apis deploy -v $(cat revision) -r -n $_SERVICE -t $(cat token) -e $_ENV -s $_GSA@$PROJECT_ID.iam.gserviceaccount.com
     #
     ## Let's handle the apiproduct 
-    # foo
-    #/tmp/apigeecli products list -o $PROJECT_ID -t $(cat token) | jq ".apiProduct [].name" | fgrep $_SERVICE >/dev/null
-    #if [ $? -eq "0" ]
-    #then
-    #fi
+    #
+    /tmp/apigeecli products list -o $PROJECT_ID -t $(cat token) | jq ".apiProduct [].name" | fgrep $_SERVICE >/dev/null
+    if [ $? -eq "0" ]
+    then
+      apigeecli products update -o apigee-product-demo -d "${_SERVICE} product" -m "${_SERVICE}Product" -n ${_SERVICE}Product -p $_SERVICE -t $(gcloud auth print-access-token) -f auto
+    else
+      apigeecli products create -o apigee-product-demo -d "${_SERVICE}  product" -e $_ENV -m "${_SERVICE}Product" -n ${_SERVICE}Product -p $_SERVICE -t $(gcloud auth print-access-token) -f auto
+    fi
+    #
+    ## Now let's handle the app
+    #
+    /tmp/apigeecli apps list -o $PROJECT_ID -t $(cat token) | jq ".apiProduct [].name" | fgrep ${_SERVICE}_app >/dev/null
+    if [ $? -eq "0" ]
+    then
+      apigeecli products update -o apigee-product-demo -n ${_SERVICE}_app -p ${_SERVICE}Product -t $(cat /tmp/token) 
+    else
+      apigeecli products create -o apigee-product-demo -e $_DEV_EMAIL -p "${_SERVICE}Product" -n ${_SERVICE}_app -t $(cat /tmp/token)
+    fi
     #images:
-    #- gcr.io/$PROJECT_ID/md
+    #- gcr.io/$PROJECT_ID/$_SERVICE
