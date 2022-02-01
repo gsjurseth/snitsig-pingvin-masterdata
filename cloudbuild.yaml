@@ -52,7 +52,7 @@ steps:
     #
     ## Now let's handle the app
     #
-    /tmp/apigeecli apps list -o $PROJECT_ID -t $(cat /tmp/token) | jq ".apiProduct [].name" | fgrep ${_SERVICE}_app >/dev/null
+    /tmp/apigeecli apps list -o $PROJECT_ID -x -t $(cat /tmp/token) | jq ".app [].name" | fgrep "${_SERVICE}_app" >/dev/null
     if [ $? -eq "0" ]
     then
       /tmp/apigeecli apps update -o apigee-product-demo -n ${_SERVICE}_app -p ${_SERVICE}Product -t $(cat /tmp/token) 
