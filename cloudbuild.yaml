@@ -20,6 +20,7 @@ steps:
   - -c
   - |
     sed -i -e "s/@@SVC@@/$_SERVICE/" opgrp-product.json
+    cat opgrp-product.json
     cp $_SERVICE.yaml /tmp
     cp opgrp-product.json /tmp
     cd /tmp 
