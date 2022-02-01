@@ -43,9 +43,9 @@ steps:
     /tmp/apigeecli products list -t $(cat /tmp/token) | jq ".apiProduct [].name" | fgrep $_SERVICE >/dev/null
     if [ $? -eq "0" ]
     then
-      apigeecli products update -o apigee-product-demo -d "${_SERVICE} product" -m "${_SERVICE}Product" -n ${_SERVICE}Product -p $_SERVICE -t $(cat /tmp/token) -f auto
+      /tmp/apigeecli products update -o apigee-product-demo -d "${_SERVICE} product" -m "${_SERVICE}Product" -n ${_SERVICE}Product -p $_SERVICE -t $(cat /tmp/token) -f auto
     else
-      apigeecli products create -o apigee-product-demo -d "${_SERVICE}  product" -e $_ENV -m "${_SERVICE}Product" -n ${_SERVICE}Product -p $_SERVICE -t $(cat /tmp/token) -f auto
+      /tmp/apigeecli products create -o apigee-product-demo -d "${_SERVICE}  product" -e $_ENV -m "${_SERVICE}Product" -n ${_SERVICE}Product -p $_SERVICE -t $(cat /tmp/token) -f auto
     fi
     #
     ## Now let's handle the app
@@ -53,9 +53,9 @@ steps:
     /tmp/apigeecli apps list -o $PROJECT_ID -t $(cat /tmp/token) | jq ".apiProduct [].name" | fgrep ${_SERVICE}_app >/dev/null
     if [ $? -eq "0" ]
     then
-      apigeecli products update -o apigee-product-demo -n ${_SERVICE}_app -p ${_SERVICE}Product -t $(cat /tmp/token) 
+      /tmp/apigeecli products update -o apigee-product-demo -n ${_SERVICE}_app -p ${_SERVICE}Product -t $(cat /tmp/token) 
     else
-      apigeecli products create -o apigee-product-demo -e $_DEV_EMAIL -p "${_SERVICE}Product" -n ${_SERVICE}_app -t $(cat /tmp/token)
+      /tmp/apigeecli products create -o apigee-product-demo -e $_DEV_EMAIL -p "${_SERVICE}Product" -n ${_SERVICE}_app -t $(cat /tmp/token)
     fi
     #images:
     #- gcr.io/$PROJECT_ID/$_SERVICE
