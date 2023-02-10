@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   version: 0.0.1
-  title: Masterdata microservice
+  title: Masterdata microservice a new string
   description: |
     Masterdata microservice
 servers: 
